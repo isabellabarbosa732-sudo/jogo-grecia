@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aula 3 · As 7 Vidas da Gata Viajante</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF5FA; --panel:#FFFFFF; --ink:#2A1238; --soft:#6D4C80;
+  --pink:#D6336C; --purple:#7B2D8E; --gold:#B88407; --mint:#11965F; --blue:#1F63D6;
+  --line:#F2D6E6; --chip:#FCE8F3;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1C0F2B; --panel:#2A1840; --ink:#FFF0FA; --soft:#D5B6E6;
+    --pink:#FF5FA2; --purple:#C77DFF; --gold:#FFD23F; --mint:#3DEBA0; --blue:#5CB8FF;
+    --line:#46295F; --chip:#3A2052;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1C0F2B; --panel:#2A1840; --ink:#FFF0FA; --soft:#D5B6E6;
+  --pink:#FF5FA2; --purple:#C77DFF; --gold:#FFD23F; --mint:#3DEBA0; --blue:#5CB8FF;
+  --line:#46295F; --chip:#3A2052;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:18px;line-height:1.5}
+.meander{height:18px;background-color:var(--pink);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='18'%3E%3Cpath d='M0 16h28V4H10v8h10V8' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E") repeat-x;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='18'%3E%3Cpath d='M0 16h28V4H10v8h10V8' fill='none' stroke='black' stroke-width='3'/%3E%3C/svg%3E") repeat-x;}
+main{max-width:760px;margin:0 auto;padding:16px 18px 50px}
+.hud{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--panel);border:3px solid var(--line);border-radius:18px;padding:10px 14px;margin-bottom:14px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.lives{font-size:22px;letter-spacing:2px}
+.lives .lost{opacity:.18;filter:grayscale(1)}
+.coins,.phase{font-weight:900}
+.streak{font-weight:900;color:var(--pink)}
+.screen{background:var(--panel);border:3px solid var(--line);border-radius:24px;padding:24px clamp(16px,4vw,32px);text-align:center}
+h1{font-family:'Cinzel',Georgia,serif;font-weight:900;font-size:clamp(30px,7vw,52px);line-height:1.05;margin:6px 0;color:var(--pink)}
+h2{font-family:'Cinzel',Georgia,serif;font-size:clamp(22px,5vw,32px);margin:6px 0}
+.hero-cat{font-size:96px;line-height:1;display:block;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(5deg)}}
+@media (prefers-reduced-motion:reduce){.hero-cat{animation:none}}
+.rules{text-align:left;background:var(--chip);border-radius:16px;padding:12px 16px;margin:16px 0;font-weight:700}
+.rules p{margin:6px 0}
+.map{display:flex;justify-content:center;gap:8px;align-items:center;margin:14px 0;flex-wrap:wrap;font-weight:900}
+.map span{padding:8px 12px;border-radius:999px;background:var(--chip);border:3px solid var(--line)}
+.map span.on{border-color:var(--pink);background:color-mix(in srgb,var(--pink) 18%,transparent)}
+.map span.ok{border-color:var(--mint)}
+.btn{font:inherit;font-weight:900;font-size:19px;border:none;border-radius:16px;padding:14px 26px;cursor:pointer;background:var(--pink);color:#fff;margin:6px}
+.btn.ghost{background:transparent;color:var(--pink);border:3px solid var(--pink)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.qtype{display:inline-block;font-weight:900;font-size:15px;padding:4px 12px;border-radius:999px;background:var(--chip);color:var(--purple)}
+.qtext{font-size:clamp(20px,4.5vw,25px);font-weight:900;margin:14px 0 16px;line-height:1.35}
+.opts{display:grid;gap:10px;text-align:left}
+.opts.tf{grid-template-columns:1fr 1fr}
+.opt{font:inherit;font-weight:800;font-size:18px;background:var(--bg);color:var(--ink);border:3px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;text-align:left}
+.opts.tf .opt{text-align:center;font-size:22px}
+.opt:hover:not(:disabled){border-color:var(--pink)}
+.opt.right{border-color:var(--mint);background:color-mix(in srgb,var(--mint) 20%,transparent)}
+.opt.wrong{border-color:var(--pink);background:color-mix(in srgb,var(--pink) 16%,transparent)}
+.opt:disabled{cursor:default}
+.expl{margin:16px 0 4px;border-radius:16px;padding:12px 14px;font-weight:800;text-align:left}
+.expl.good{background:color-mix(in srgb,var(--mint) 16%,transparent)}
+.expl.bad{background:color-mix(in srgb,var(--pink) 14%,transparent)}
+.boss{border-color:var(--gold)}
+.boss .qtype{background:var(--gold);color:#2A1238}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;margin:4px 0 14px}
+.bar i{display:block;height:100%;background:var(--pink);transition:width .3s}
+.review{text-align:left;display:grid;gap:8px;margin-top:12px}
+.review div{background:var(--chip);border-radius:14px;padding:10px 14px;font-weight:700}
+.big{font-size:44px;font-weight:900;font-family:'Cinzel',Georgia,serif;color:var(--gold);margin:4px 0}
+canvas{position:fixed;inset:0;pointer-events:none;z-index:20}
+@media (max-width:520px){.opts.tf{grid-template-columns:1fr}body{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="meander" aria-hidden="true"></div>
+<canvas id="fx"></canvas>
+<main>
+  <div class="hud" id="hud" hidden>
+    <span class="lives" id="lives" aria-label="Vidas"></span>
+    <span class="phase" id="ph"></span>
+    <span class="streak" id="stk"></span>
+    <span class="coins" id="coins"></span>
+  </div>
+  <section class="screen" id="scr" aria-live="polite"></section>
+</main>
+<script>
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const PH=[
+ {name:"Grécia",icon:"🏛️",coin:"dracmas",coinIcon:"🪙",intro:"A gata Mia chegou na Grécia Antiga, no meio da Ágora de Atenas! Ajude-a a entender as pólis.",
+  qs:[
+   {t:"mc",q:"Qual palavra grega significa 'poder do povo'?",o:["Democracia","Oligarquia","Monarquia","Império"],c:0,e:"Demos = povo, kratos = poder."},
+   {t:"tf",q:"Em Atenas, as mulheres podiam votar na Eclésia.",c:false,e:"Falso! Só os homens adultos, livres e filhos de atenienses eram cidadãos."},
+   {t:"mc",q:"Como se chamava a assembleia dos cidadãos de Atenas?",o:["Gerúsia","Eclésia","Senado","Agogê"],c:1,e:"Eclésia era a assembleia onde os cidadãos atenienses votavam."},
+   {t:"tf",q:"Esparta tinha dois reis ao mesmo tempo.",c:true,e:"Verdadeiro! Os dois reis comandavam o exército."},
+   {t:"mc",q:"Quem eram os hilotas?",o:["Cidadãos guerreiros de Esparta","Estrangeiros que moravam em Atenas","Servos que trabalhavam na terra em Esparta","Juízes de Roma"],c:2,e:"Os hilotas eram a maioria em Esparta e não tinham direitos."},
+   {t:"mc",q:"Esparta era governada por poucas pessoas. Que tipo de governo era esse?",o:["Democracia","Oligarquia","República","Império"],c:1,e:"Oligo = poucos, arquia = governo."},
+   {t:"tf",q:"Ostracismo era votar para expulsar da cidade alguém considerado perigoso.",c:true,e:"Verdadeiro! A pessoa ficava 10 anos longe de Atenas."},
+   {t:"mc",q:"Qual era o objetivo da educação espartana?",o:["Formar filósofos e artistas","Formar soldados fortes e obedientes","Formar comerciantes ricos","Formar sacerdotes"],c:1,e:"E de Esparta = Espada e Exército!"},
+   {t:"mc",q:"Os metecos de Atenas eram...",o:["Estrangeiros, sem direito a voto","Os reis da cidade","Os anciãos do conselho","Soldados espartanos"],c:0,e:"Metecos trabalhavam em Atenas, mas não eram cidadãos."},
+   {t:"tf",q:"Em Atenas, a democracia era direta: cada cidadão votava ele mesmo.",c:true,e:"Verdadeiro! Diferente do Brasil, onde votamos em representantes."}
+  ],
+  boss:{q:"🎭 Quem sou eu? \"Sou uma pólis onde os meninos aprendiam música, leitura e a falar bem em público, e os cidadãos votavam direto nas leis.\"",o:["Esparta","Roma","Atenas","Brasil"],c:2,e:"Atenas: A de Assembleia, Arte e Aprender a pensar!"}},
+ {name:"Roma",icon:"🐺",coin:"denários",coinIcon:"💰",intro:"Um portal levou a Mia até Roma! Aqui ela vai ver três governos diferentes. Lembre: o gato MIA, RONRONA e IMPERA.",
+  qs:[
+   {t:"mc",q:"Qual é a ordem certa dos governos de Roma?",o:["República → Império → Monarquia","Monarquia → República → Império","Império → Monarquia → República","Monarquia → Império → República"],c:1,e:"MIA (Monarquia), RONRONA (República), IMPERA (Império)."},
+   {t:"mc",q:"O que quer dizer res publica?",o:["Coisa do rei","Coisa pública","Poder do povo","Governo de poucos"],c:1,e:"República vem de res publica, a coisa pública."},
+   {t:"tf",q:"Na República, Roma tinha 2 cônsules para um vigiar o outro.",c:true,e:"Verdadeiro! Assim ninguém virava rei de novo."},
+   {t:"mc",q:"Quem foi o primeiro imperador de Roma?",o:["Júlio César","Rômulo","Otávio Augusto","Tarquínio"],c:2,e:"Otávio recebeu o título de Augusto em 27 a.C. Júlio César nunca foi imperador!"},
+   {t:"tf",q:"Os plebeus eram a minoria rica de Roma.",c:false,e:"Falso! Os plebeus eram a maioria do povo. Os ricos eram os patrícios."},
+   {t:"mc",q:"Por que a Lei das Doze Tábuas foi importante?",o:["Porque colocou as leis por escrito, para todos conhecerem","Porque criou o Império","Porque acabou com o Senado","Porque proibiu a escravidão"],c:0,e:"Com as leis escritas, os patrícios não podiam inventar regras."},
+   {t:"mc",q:"Os escravos em Roma geralmente eram...",o:["Filhos de patrícios","Prisioneiros de guerra","Senadores idosos","Cônsules derrotados"],c:1,e:"Eram tratados como propriedade e não tinham direitos."},
+   {t:"mc",q:"O que fazia o tribuno da plebe?",o:["Comandava o exército","Defendia os plebeus e podia vetar leis","Escolhia o imperador","Cuidava dos templos"],c:1,e:"Foi uma conquista das lutas dos plebeus."},
+   {t:"tf",q:"No Império, o imperador concentrava o poder e o Senado obedecia.",c:true,e:"Verdadeiro! Império = Imperador + Imenso."},
+   {t:"mc",q:"Qual a diferença entre o rei e o imperador de Roma?",o:["Não tem diferença nenhuma","O rei veio no começo, com Roma pequena; o imperador veio depois da República, com Roma enorme","O imperador era eleito por 1 ano","O rei vivia na Grécia"],c:1,e:"Os dois mandavam sozinhos, mas em momentos diferentes da história."},
+   {t:"tf",q:"Segundo a lenda, Roma foi fundada por Rômulo e Remo.",c:true,e:"Verdadeiro! Em 753 a.C., segundo a lenda."}
+  ],
+  boss:{q:"🎭 Quem sou eu? \"Sou de família rica e antiga, tenho muitas terras e faço parte do Senado romano.\"",o:["Plebeu","Escravo","Patrício","Hilota"],c:2,e:"Patrício = Poderoso! Plebeu = Povão."}},
+ {name:"Hoje",icon:"🇧🇷",coin:"reais",coinIcon:"💵",intro:"Último portal: a Mia voltou para o Brasil de hoje! O que ficou da Grécia e de Roma?",
+  qs:[
+   {t:"mc",q:"Que forma de governo o Brasil tem hoje?",o:["Monarquia","República","Império","Oligarquia"],c:1,e:"O Brasil é uma república desde 1889."},
+   {t:"tf",q:"No Brasil votamos em representantes, então nossa democracia é representativa.",c:true,e:"Verdadeiro! Em Atenas era direta."},
+   {t:"mc",q:"Qual destas palavras de Roma ainda existe no governo do Brasil?",o:["Éforos","Gerúsia","Senado","Ápela"],c:2,e:"O Brasil tem senadores, como Roma tinha."},
+   {t:"tf",q:"Hoje, no Brasil, só homens ricos podem votar.",c:false,e:"Falso! Hoje a cidadania é para todos: homens e mulheres, a partir dos 16 anos."},
+   {t:"mc",q:"Qual a diferença entre a democracia de Atenas e a do Brasil?",o:["Em Atenas era direta; no Brasil é representativa","Em Atenas todos votavam; no Brasil ninguém vota","Não há diferença","No Brasil só os reis votam"],c:0,e:"E também: hoje mulheres votam, em Atenas não."},
+   {t:"mc",q:"Qual destes países ainda tem rei ou rainha?",o:["Brasil","Argentina","Reino Unido","Estados Unidos"],c:2,e:"O Reino Unido é uma monarquia, mas quem governa no dia a dia é o primeiro-ministro."},
+   {t:"tf",q:"Democracia e República são exatamente a mesma coisa.",c:false,e:"Falso! Democracia = poder do povo pelo voto. República = governantes com mandato, sem rei. O Brasil é as duas coisas."}
+  ],
+  boss:{q:"✍️ Complete: \"Na Antiguidade, a cidadania era para poucos. Hoje, no Brasil, ela é...\"",o:["Só para os patrícios","Para todos, homens e mulheres","Só para quem mora em Brasília","Só para os militares"],c:1,e:"Essa é a grande mudança: hoje a cidadania inclui todos!"}}
+];
+const PER_PHASE=7;
+let lives,coins,streak,phase,queue,qi,wrongs,best;
+const scr=document.getElementById('scr');
+const hud=document.getElementById('hud');
+
+function drawHud(){
+  hud.hidden=false;
+  document.getElementById('lives').innerHTML=Array.from({length:7},(_,i)=>`<span class="${i<lives?'':'lost'}">🐾</span>`).join('');
+  document.getElementById('lives').setAttribute('aria-label',lives+' vidas');
+  const p=PH[phase];
+  document.getElementById('ph').textContent=`${p.icon} ${p.name}`;
+  document.getElementById('coins').textContent=`${p.coinIcon} ${coins}`;
+  document.getElementById('stk').textContent=streak>=3?`🔥 ${streak} seguidas!`:'';
+}
+function mapHtml(){return `<div class="map">${PH.map((p,i)=>`<span class="${i===phase?'on':i<phase?'ok':''}">${i<phase?'✅':p.icon} ${p.name}</span>`).join(' ➜ ')}</div>`;}
+
+function start(){
+  lives=7;coins=0;streak=0;phase=0;wrongs=[];best=0;
+  hud.hidden=true;
+  scr.innerHTML=`<span class="hero-cat" aria-hidden="true">🐈‍⬛⏳</span>
+   <h1>As 7 Vidas da Gata Viajante</h1>
+   <p style="font-weight:800;color:var(--soft)">A gata Mia caiu num portal do tempo! Leve-a pela Grécia, por Roma e de volta ao Brasil de hoje.</p>
+   <div class="rules">
+    <p>🐾 Você tem <b>7 vidas</b>, como todo gato. Cada erro custa uma vida.</p>
+    <p>🪙 Cada acerto vale moedas da época. Acertar 3 seguidas dá bônus!</p>
+    <p>👑 No fim de cada era tem um <b>Desafio Final</b> que vale o dobro.</p>
+    <p>📚 Quando errar, leia a explicação: ela é o que vai cair na prova!</p>
+   </div>
+   ${mapHtml()}
+   <button class="btn" id="go">Entrar no portal</button>`;
+  document.getElementById('go').onclick=intro;
+}
+function intro(){
+  const p=PH[phase];
+  queue=shuffle(p.qs).slice(0,PER_PHASE); qi=0;
+  drawHud();
+  scr.className='screen';
+  scr.innerHTML=`<span class="hero-cat" aria-hidden="true">${p.icon}</span><h2>Era ${phase+1}: ${p.name}</h2>${mapHtml()}<p style="font-weight:800">${p.intro}</p><button class="btn" id="go">Começar</button>`;
+  document.getElementById('go').onclick=ask;
+}
+function ask(){
+  const p=PH[phase];
+  const isBoss=qi>=queue.length;
+  const q=isBoss?{...p.boss,t:'mc'}:queue[qi];
+  drawHud();
+  scr.className='screen'+(isBoss?' boss':'');
+  const total=queue.length+1;
+  scr.innerHTML=`<div class="bar"><i style="width:${(qi/total)*100}%"></i></div>
+   <span class="qtype">${isBoss?'👑 Desafio Final · vale o dobro':q.t==='tf'?'Verdadeiro ou falso?':'Escolha a certa'}</span>
+   <p class="qtext">${q.q}</p>
+   <div class="opts ${q.t==='tf'?'tf':''}" id="op"></div><div id="ex"></div>`;
+  const op=document.getElementById('op');
+  const items = q.t==='tf' ? [['✔️ Verdadeiro',true],['✖️ Falso',false]] : shuffle(q.o.map((t,i)=>[t,i]));
+  items.forEach(([label,val])=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=label;
+    b.onclick=()=>{
+      [...op.children].forEach(x=>x.disabled=true);
+      const ok = val===q.c;
+      if(ok){
+        b.classList.add('right'); streak++;
+        let gain=(isBoss?20:10)+(streak>=3?5:0); coins+=gain;
+        document.getElementById('ex').innerHTML=`<div class="expl good">✅ +${gain} ${p.coin}! ${q.e}</div><button class="btn" id="nx">Continuar</button>`;
+        if(isBoss) burst(40);
+      } else {
+        b.classList.add('wrong'); streak=0; lives--;
+        [...op.children].forEach((x,k)=>{ if(items[k][1]===q.c) x.classList.add('right'); });
+        wrongs.push({q:q.q,e:q.e});
+        document.getElementById('ex').innerHTML=`<div class="expl bad">🐾 Perdeu uma vida! ${q.e}</div><button class="btn" id="nx">Continuar</button>`;
+      }
+      best=Math.max(best,streak);
+      drawHud();
+      document.getElementById('nx').onclick=()=>{
+        if(lives<=0) return over();
+        if(isBoss){ phase++; return phase<PH.length?portal():win(); }
+        qi++; ask();
+      };
+      document.getElementById('nx').focus();
+    };
+    op.appendChild(b);
+  });
+}
+function portal(){
+  burst(60);
+  scr.className='screen';
+  scr.innerHTML=`<span class="hero-cat" aria-hidden="true">🌀😺</span><h2>Era concluída!</h2>${mapHtml()}<p style="font-weight:800">Você ainda tem ${lives} ${lives===1?'vida':'vidas'}. O portal está abrindo...</p><button class="btn" id="go">Atravessar o portal</button>`;
+  document.getElementById('go').onclick=intro;
+}
+function rank(){
+  if(lives>=6) return ["👑 Imperatriz da História","Quase sem erros. Você está pronta para a prova!"];
+  if(lives>=4) return ["🏛️ Senadora de Roma","Muito bem! Revise os erros abaixo e fica perfeito."];
+  if(lives>=2) return ["🗳️ Cidadã de Atenas","Bom trabalho! Releia os erros e jogue mais uma vez."];
+  return ["🛡️ Guerreira de Esparta","Você aguentou firme! Revise os erros e tente de novo."];
+}
+function reviewHtml(){
+  if(!wrongs.length) return '<p style="font-weight:900">Nenhum erro! 🎉</p>';
+  return `<h2 style="font-size:22px;margin-top:18px">📚 Revise o que errou</h2><div class="review">${wrongs.map(w=>`<div>❓ ${w.q}<br>💡 ${w.e}</div>`).join('')}</div>`;
+}
+function win(){
+  burst(160);
+  const [title,msg]=rank();
+  hud.hidden=true;
+  scr.className='screen';
+  scr.innerHTML=`<span class="hero-cat" aria-hidden="true">😻🏆</span><h1>A Mia voltou para casa!</h1>
+   <p class="big">${title}</p><p style="font-weight:800">${msg}</p>
+   <div class="rules"><p>🐾 Vidas restantes: <b>${lives} de 7</b></p><p>💰 Moedas: <b>${coins}</b></p><p>🔥 Maior sequência: <b>${best}</b></p></div>
+   ${reviewHtml()}
+   <button class="btn" id="go">Jogar de novo</button>`;
+  document.getElementById('go').onclick=start;
+}
+function over(){
+  hud.hidden=true;
+  scr.className='screen';
+  scr.innerHTML=`<span class="hero-cat" aria-hidden="true">😿</span><h2>A Mia usou as 7 vidas!</h2>
+   <p style="font-weight:800">Ela ficou presa na era ${PH[phase].icon} ${PH[phase].name}. Leia os erros com calma e tente de novo: as perguntas mudam de ordem!</p>
+   ${reviewHtml()}
+   <button class="btn" id="go">Tentar de novo</button>`;
+  document.getElementById('go').onclick=start;
+}
+/* confetti */
+const cv=document.getElementById('fx'),cx=cv.getContext('2d');let parts=[];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function size(){cv.width=innerWidth;cv.height=innerHeight;}addEventListener('resize',size);size();
+function burst(n){
+  if(reduce) return;
+  const cols=['#FF5FA2','#FFD23F','#3DEBA0','#5CB8FF','#C77DFF'];
+  for(let i=0;i<n;i++) parts.push({x:innerWidth/2,y:innerHeight/3,vx:(Math.random()-.5)*14,vy:Math.random()*-12-3,s:Math.random()*8+4,c:cols[i%cols.length],l:120});
+  if(parts.length===n) loop();
+}
+function loop(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.35;p.l--;cx.fillStyle=p.c;cx.fillRect(p.x,p.y,p.s,p.s*.6);});
+  parts=parts.filter(p=>p.l>0&&p.y<innerHeight+20);
+  if(parts.length) requestAnimationFrame(loop); else cx.clearRect(0,0,cv.width,cv.height);
+}
+start();
+</script>
+</body>
+</html>
